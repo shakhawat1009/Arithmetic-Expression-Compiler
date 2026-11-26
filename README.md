@@ -43,3 +43,7 @@ Then open http://localhost:8000
 - **ModuleNotFoundError: flask**: install the packages inside your active environment.
 - **Port 8000 in use**: stop the other process, then rerun `python backend.py`.
 - **Page loads but nothing works**: open `http://localhost:8000` rather than opening `index.html` directly.
+
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
