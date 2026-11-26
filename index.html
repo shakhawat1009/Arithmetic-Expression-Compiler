@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arithmetic Expression Compiler</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Top App Bar -->
+        <div class="top-nav">
+            <div class="top-nav-right">
+                <!-- Small Animated Message -->
+                <div class="status-indicator-badge">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text" id="status-message">Hi, all okay?</span>
+                </div>
+                <!-- Day / Night Mode Toggle -->
+                <button id="theme-toggle-btn" class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Day/Night Mode">
+                    <span id="theme-icon">🌙</span>
+                    <span id="theme-label">Night Mode</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo-box">
+                    <svg class="header-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="32" cy="32" r="30" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-width="3"/>
+                        <path d="M20 24H44M32 20V44M22 40L42 24M22 24L42 40" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+                        <circle cx="32" cy="32" r="5" fill="#ffd700"/>
+                    </svg>
+                </div>
+                <div class="header-text">
+                    <h1>Arithmetic Expression Compiler</h1>
+                    <p class="header-subtitle">Full Multi-Stage Compiler Pipeline</p>
+                </div>
+            </div>
+            
+            <!-- Live Functional Stats Bar -->
+            <div class="stats-bar" id="stats-bar">
+                <div class="stat-pill">
+                    <span class="stat-label">Tokens</span>
+                    <span class="stat-value" id="stat-tokens">0</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">AST Nodes</span>
+                    <span class="stat-value" id="stat-ast">0</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">TAC Inst.</span>
+                    <span class="stat-value" id="stat-tac">0</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-label">Assembly Inst.</span>
+                    <span class="stat-value" id="stat-asm">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <label for="expression-input">Enter an arithmetic expression or assignment:</label>
+            <div class="input-box">
+                <input type="text" id="expression-input" placeholder="e.g. a = b + c * d  or  id1 + id2 * id3 - 5" value="a = b + c * d" autocomplete="off" spellcheck="false" />
+                <button id="analyze-btn" onclick="analyzeExpression()">
+                    <span id="btn-text">Compile &amp; Analyze</span>
+                    <span id="btn-spinner" class="spinner" style="display: none;"></span>
+                </button>
+            </div>
+            
+            <div class="input-meta-row">
+                <div class="hint">
+                    <strong>Supports:</strong> Identifiers (<code>a</code>, <code>b</code>, <code>id1</code>), Numbers (<code>5</code>, <code>2.5</code>), Operators (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>), Assignments (<code>=</code>), Parentheses <code>()</code>
+                </div>
+                <div class="quick-examples">
+                    <span class="examples-label">Examples:</span>
+                    <button class="example-btn" onclick="loadExample('a = b + c * d')">a = b + c * d</button>
+                    <button class="example-btn" onclick="loadExample('id1 + id2 * id3 - 5')">id1 + id2 * id3 - 5</button>
+                    <button class="example-btn" onclick="loadExample('x = (y + 4.0) * (z - 2.5) / 10')">x = (y + 4.0) * (z - 2.5) / 10</button>
+                    <button class="example-btn" onclick="loadExample('result = 2 * 3 + x * 1 + y * 0')">result = 2 * 3 + x * 1 + y * 0</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Result Section -->
+        <div class="output-result-section">
+            <div class="section-header-row">
+                <h3>Compilation Status &amp; Result</h3>
+                <div id="status-badge-container"></div>
+            </div>
+            <div class="output-result-box" id="output-result-box">
+                <div class="output-placeholder">
+                    <p>Enter an arithmetic expression and click "Compile &amp; Analyze" to start the compilation pipeline.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Output / Stage Navigation Section -->
+        <div class="output-section">
+            <div class="analyzer-tabs" role="tablist">
+                <button class="tab-btn active" onclick="showAnalyzer('lexical')" id="tab-lexical" role="tab">
+                    Lexical Analyzer
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('syntax')" id="tab-syntax" role="tab">
+                    Syntax Analyzer
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('parse_tree_hierarchy')" id="tab-parse_tree_hierarchy" role="tab">
+                    Parse Tree Hierarchy
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('semantic')" id="tab-semantic" role="tab">
+                    Semantic Analysis
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('tac')" id="tab-tac" role="tab">
+                    TAC 1–5 Stages
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('optimization')" id="tab-optimization" role="tab">
+                    Optimization
+                </button>
+                <button class="tab-btn" onclick="showAnalyzer('final_code')" id="tab-final_code" role="tab">
+                    Assembly Code
+                </button>
+            </div>
+
+            <div class="output-box" id="output-box">
+                <div class="output-placeholder">
+                    <p>Select any stage tab above after compilation to inspect detailed compiler transformations.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p class="credit-name">K. M. Shakhawat Hossain</p>
+        </footer>
+    </div>
+
+    <!-- Hidden canvas for rendering and exporting parse trees as high-res PNG/JPEG -->
+    <canvas id="export-canvas" style="display:none;"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>
